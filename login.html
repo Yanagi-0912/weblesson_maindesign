@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入</title>
+    <link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+    <header>
+        <h1>登入</h1>
+        <nav>
+            <a href="homepage.html">首頁</a>
+            <a href="#">遊戲分類</a>
+            <a href="#">關於我們</a>
+            <a href="login.html">登入</a>
+            <a href="#">註冊</a>
+        </nav>
+    </header>
+
+    <div class="box" id="login">
+        <form id="fm1" action="" method="post"></form> 
+        <section class="row">
+            <label for="username">帳 號:
+                <span id="username-warning" style="display:none;">請輸入用戶名</span>
+            </label>
+
+                <input id="username" name="username" class="required" type="text" value="" size="25" autocomplete="off"/>   
+        </section>
+          
+        <section class="row">
+            <label for="password">密 碼:
+                <span id="password-warning" style="display:none;">請輸入密碼</span>
+            </label>
+            
+                <input id="password" name="password" class="required" tabindex="2" accesskey="p" type="password" value="" size="25" autocomplete="off"/>
+        </section>
+      
+        <section class="row btn-row">
+            <input class="btn-submit" name="submit" value="登錄" type="submit" />
+        </section>
+      
+        <section class="row">
+            <a class="forget-password" href="ForgotPass.html">
+              忘記密碼？
+            </a>
+        </section>
+        </form>
+      
+          
+    </div>
+
+    <footer>
+        <p>&copy; 糞Game獵人</p>
+    </footer>
+</body>
+</html>
