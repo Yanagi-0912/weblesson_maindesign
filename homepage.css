@@ -101,6 +101,27 @@ nav a:hover {
     margin-bottom: 20px;
 }
 
+.newgame {
+    background-color: #ffffff1c;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.newgame h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.classical {
+    background-color: #ffffff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.classical h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
 .game-list {
     display: flex;
     justify-content: space-around;
