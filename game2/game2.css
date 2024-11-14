@@ -3,12 +3,18 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-image: url('background.jpg');
+    background-size: cover;
+}
+body h1{
+    color: #ccc;
 }
 #coin-display, #efficiency-display {
     position: absolute;
     top: 10px;
     font-size: 20px;
     font-weight: bold;
+    color: #ccc;
 }
 #coin-display { right: 10px; }
 #efficiency-display { left: 10px; }
@@ -25,6 +31,7 @@ body {
     grid-template-rows: repeat(6, 80px);
     gap: 5px;
     margin-top: 20px;
+    background-color: rgba(108, 255, 240, 0.361);
 }
 
 .cell {
@@ -64,10 +71,10 @@ body {
 
 #cost-display {
     font-size: 12px;
-    color: gray;
+    color: darkslategray;
     position: absolute;
-    top: -8px;
-    right: -10px;
+    top: -4px;
+
 }
 
 #cheat-buttons {
@@ -80,7 +87,7 @@ body {
 .cheat-btn {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #f0c040;
+    background-color: darkcyan;
     border: none;
     cursor: pointer;
 }
@@ -91,6 +98,7 @@ body {
     height: 480px;
     width: 200px;
     border: 1px solid #ccc;
+    background-color: rgba(108, 255, 240, 0.361);
 }
 
 #rules {
@@ -132,4 +140,23 @@ body {
     text-decoration: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+footer a {
+    color: #ff6347;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+footer a:hover {
+    text-decoration: underline;
 }
