@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle 遊戲</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #d4edda; /* 淺綠色背景 */
+            color: #333;
+            padding: 20px;
+            margin: 0;
+            overflow-y: auto;  /* 允許垂直滾動 */
+            height: 100%;
+            background-image: url('game1/pngtree-hand-drawn-seamless-pattern-with-english-letters-image_1399781.jpg'); /* 設置相對路徑的背景圖片 */
+            background-size: cover;  /* 讓背景圖片覆蓋整個畫面 */
+            background-position: center;  /* 讓圖片居中顯示 */
+        }
+
+        #container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;  /* 讓容器內容換行，適應不同螢幕 */
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        #ranking-board {
+            width: 250px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-height: 400px;  /* 限制排名板的最大高度 */
+            overflow-y: auto;  /* 使排名板有滾動條 */
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 1em;
+            border-bottom: 1px solid #eee;
+        }
+
+        .rank-item:first-child {
+            font-weight: bold;
+            color: #ffb400;
+        }
+
+        .rank-item:first-child .rank-number::before {
+            content: "👑 ";
+        }
+
+        .rank-number {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 65%;
+            max-height: 90vh;  /* 限制遊戲容器的最大高度 */
+            overflow-y: auto;  /* 使遊戲容器有滾動條 */
+        }
+
+        #timer {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 40px);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tile {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            color: white;
+            background-color: #888;
+        }
+
+        .correct {
+            background-color: #6aaa64;
+        }
+
+        .present {
+            background-color: #c9b458;
+        }
+
+        .absent {
+            background-color: #787c7e;
+        }
+
+        #message, #name-input-section {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        #guess-input {
+            padding: 8px;
+            font-size: 1em;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        #one-click-button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+
+        #one-click-button:hover {
+            background-color: #218838;
+        }
+
+        /* 放大並上移開始遊戲按鈕 */
+        #start-game-button {
+            padding: 15px 30px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #start-game-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="ranking-board">
+            <h2>排名紀錄</h2>
+            <div id="ranking-list"></div>
+        </div>
+
+        <div id="game-container">
+            <button id="start-game-button" onclick="startNewRound()">開始遊戲</button> <!-- 放大並上移 -->
+            <h1>Wordle 遊戲</h1>
+            <div id="timer">時間: 0 秒</div>
+            <div id="game-board"></div>
+            <input type="text" id="guess-input" maxlength="5" placeholder="輸入5個字母的單字">
+            <button onclick="checkGuess()">提交猜測</button>
+            <button id="one-click-button" onclick="oneClickSolve()">一步登天</button>
+            <p id="message"></p>
+            <div id="name-input-section" style="display: none;">
+                <input type="text" id="player-name" placeholder="輸入你的名字">
+                <button onclick="saveScore()">儲存分數</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const words = ["APPLE", "GRAPE", "PEACH", "BERRY", "MANGO", "MARCH", "APRIL", "RESET", "START", "CARRY", "INDIA"];
+        let secretWord, attempts, timer, secondsElapsed;
+
+        function startNewRound() {
+            secretWord = words[Math.floor(Math.random() * words.length)];
+            attempts = 0;
+            secondsElapsed = 0;
+            document.getElementById("timer").textContent = "時間: 0 秒";
+            document.getElementById("message").textContent = "";
+            document.getElementById("guess-input").value = "";
+            document.getElementById("name-input-section").style.display = "none";
+            createBoard();
+            startTimer();
+        }
+
+        function createBoard() {
+            const gameBoard = document.getElementById("game-board");
+            gameBoard.innerHTML = "";
+            for (let i = 0; i < 6 * 5; i++) {
+                const tile = document.createElement("div");
+                tile.classList.add("tile");
+                gameBoard.appendChild(tile);
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timer);  
+            timer = setInterval(() => {
+                secondsElapsed++;
+                document.getElementById("timer").textContent = `時間: ${secondsElapsed} 秒`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timer);
+        }
+
+        function checkGuess() {
+            const guessInput = document.getElementById("guess-input");
+            const guess = guessInput.value.toUpperCase();
+
+            if (guess.length !== 5) {
+                alert("請輸入5個字母的單字！");
+                return;
+            }
+            if (attempts >= 6) {
+                alert("已達到最大猜測次數！");
+                return;
+            }
+
+            const rowStart = attempts * 5;
+            for (let i = 0; i < 5; i++) {
+                const tile = document.getElementById("game-board").children[rowStart + i];
+                tile.textContent = guess[i];
+                
+                if (guess[i] === secretWord[i]) {
+                    tile.classList.add("correct");
+                } else if (secretWord.includes(guess[i])) {
+                    tile.classList.add("present");
+                } else {
+                    tile.classList.add("absent");
+                }
+            }
+
+            attempts++;
+            guessInput.value = "";
+
+            if (guess === secretWord) {
+                document.getElementById("message").textContent = `恭喜！你猜對了！用時 ${secondsElapsed} 秒`;
+                document.getElementById("name-input-section").style.display = "block";
+                stopTimer();
+            } else if (attempts === 6) {
+                document.getElementById("message").textContent = `遊戲結束！答案是 ${secretWord}。用時 ${secondsElapsed} 秒`;
+                document.getElementById("name-input-section").style.display = "block";
+                stopTimer();
+            }
+        }
+
+        function oneClickSolve() {
+            // 顯示正確答案並結束遊戲
+            document.getElementById("message").textContent = `一步登天！正確答案是 ${secretWord}`;
+            stopTimer();
+
+            // 顯示輸入名字的框並儲存分數
+            document.getElementById("name-input-section").style.display = "block";
+
+            // 更新遊戲板上的每個字母格子為綠色
+            const gameBoard = document.getElementById("game-board");
+            const tiles = gameBoard.children;
+            for (let i = 0; i < secretWord.length; i++) {
+                const tile = tiles[i]; // 每個字母格子
+                tile.textContent = secretWord[i];
+                tile.classList.add("correct"); // 設置為綠色
+            }
+
+            // 當玩家提交分數時，儲存並更新排名
+            document.getElementById("player-name").focus();
+        }   
+
+
+        function saveScore() {
+            const playerName = document.getElementById("player-name").value.trim();
+            if (!playerName) {
+                alert("請輸入名字！");
+                return;
+            }
+            
+            const scoreData = { name: playerName, time: secondsElapsed };
+            const rankingList = JSON.parse(localStorage.getItem("rankingList")) || [];
+            rankingList.push(scoreData);
+            rankingList.sort((a, b) => a.time - b.time);
+
+            localStorage.setItem("rankingList", JSON.stringify(rankingList));
+            updateRankingBoard();
+        }
+
+        function updateRankingBoard() {
+            const rankingList = JSON.parse(localStorage.getItem("rankingList")) || [];
+            const rankingBoard = document.getElementById("ranking-list");
+            rankingBoard.innerHTML = "";
+
+            rankingList.slice(0, 10).forEach((score, index) => {
+                const rankItem = document.createElement("div");
+                rankItem.classList.add("rank-item");
+
+                const rankNumber = document.createElement("span");
+                rankNumber.classList.add("rank-number");
+                rankNumber.textContent = `${index + 1}.`;
+
+                const rankName = document.createElement("span");
+                rankName.textContent = score.name;
+
+                const rankTime = document.createElement("span");
+                rankTime.textContent = `${score.time} 秒`;
+
+                rankItem.appendChild(rankNumber);
+                rankItem.appendChild(rankName);
+                rankItem.appendChild(rankTime);
+                rankingBoard.appendChild(rankItem);
+            });
+        }
+
+        // 初始更新排名板
+        updateRankingBoard();
+    </script>
+</body>
+</html>
