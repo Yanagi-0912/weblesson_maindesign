@@ -6,6 +6,9 @@ let generateCost = 0;
 let generateCount = 0;
 let productionRate = 0;
 let isBoosted = false;
+let levelupCost = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
+let itemname = ['融合', '隕石', '彗星', '衛星', '小行星', '行星', '恆星', '黑洞', '星系', '星系團', '超星系團'];
+let itemEfficiency = [1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512];
 
 function createBoard() {
     const gameBoard = document.getElementById("game-board");
@@ -32,7 +35,7 @@ function createBoard() {
 
 function generateItem() {
     if (coin < generateCost) {
-        alert("Coin 不足！");
+        alert("宇宙塵埃不足！");
         return;
     }
     if (generateCost > 0) coin -= generateCost;
@@ -73,27 +76,34 @@ function handleDrop(event, toIndex) {
 }
 
 function updateCoinDisplay() {
-    document.getElementById("coin-display").innerText = `Coin: ${coin}`;
+    document.getElementById("coin-display").innerText = `宇宙塵埃: ${coin}`;
 }
 
 function updateCostDisplay() {
     document.getElementById("cost-display").innerText = `消耗: ${generateCost}`;
 }
 
+function updateLevelDisplay(n) {
+    const levelDisplay = document.getElementById(`level-display${n}`);
+    levelDisplay.innerHTML = `升級${itemname[n]}<br>${itemEfficiency[n]}${n === 0 ? '/次' : '/秒'}<br>消耗: ${levelupCost[n]}`;
+}
+
 function updateEfficiency() {
-    productionRate = board.reduce((rate, level) => rate + (level || 0), 0);
+    productionRate = board.reduce((rate, level) => rate + (level ? itemEfficiency[level] : 0), 0);
     const displayRate = isBoosted ? productionRate * 2 : productionRate;
     document.getElementById("efficiency-display").innerText = `效率: ${displayRate} /秒`;
 }
 
 function collectCoins() {
     const coinsToAdd = isBoosted ? productionRate * 2 : productionRate;
-    coin += coinsToAdd;
-    updateCoinDisplay();
+    if (coinsToAdd > 0) {
+        coin += coinsToAdd;
+        updateCoinDisplay();
+    }
 }
 
 function earnCoin() {
-    coin += 1;
+    coin += itemEfficiency[0];
     updateCoinDisplay();
 }
 
@@ -123,14 +133,41 @@ function generateHighLevelItem() {
     createBoard();
 }
 
+function upgradeItem(n) {
+    if (coin < levelupCost[n]) {
+        alert("宇宙塵埃不足！");
+        return;
+    }
+    coin -= levelupCost[n];
+    levelupCost[n] *= 2;
+    itemEfficiency[n] *= 2;
+    updateLevelDisplay(n);
+    updateEfficiency();
+    updateCoinDisplay();
+}
+
+// 初始化按鈕功能
 document.getElementById("generate-btn").onclick = generateItem;
 document.getElementById("earn-btn").onclick = earnCoin;
 document.getElementById("speed-btn").onclick = applySpeedBoost;
 document.getElementById("double-coin-btn").onclick = doubleCoin;
 document.getElementById("win-start-btn").onclick = generateHighLevelItem;
 
-setInterval(collectCoins, 1000);
+for (let i = 0; i <= 10; i++) {
+    document.getElementById(`upgrade-btn${i}`).onclick = () => upgradeItem(i);
+}
 
+// 定时器：每秒生成金币
+setInterval(() => {
+    collectCoins();
+}, 1000);
+
+// 初始化界面
 createBoard();
 updateCoinDisplay();
 updateCostDisplay();
+updateEfficiency();
+
+for (let i = 0; i <= maxLevel; i++) {
+    updateLevelDisplay(i);
+}
