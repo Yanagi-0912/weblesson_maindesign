@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle 遊戲目錄</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa; /* 淺灰背景 */
+            color: #333;
+        }
+
+        header {
+            background-color: #007bff; /* 藍色背景 */
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            background-color: #0056b3; /* 深藍色 */
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-size: 1.2em;
+            margin: 0 15px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background-color: #003f7f; /* 更深藍 */
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        section {
+            margin-bottom: 30px;
+            background-color: #ffffff; /* 白色區塊 */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        section h2 {
+            color: #007bff;
+            font-size: 1.8em;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        section p {
+            line-height: 1.6;
+            margin: 0 0 15px;
+        }
+
+        footer {
+            text-align: center;
+            background-color: #f1f1f1;
+            padding: 10px 0;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-start {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #28a745; /* 綠色按鈕 */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-start:hover {
+            background-color: #218838; /* 更深的綠 */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>歡迎來到 Wordle 遊戲</h1>
+        <p>挑戰你的詞彙能力，解鎖更多的成就！</p>
+    </header>
+    <nav>
+        <a href="index.html">首頁</a>
+        <a href="game.html">立即遊戲</a>
+        <a href="ranking.html">排行榜</a>
+    </nav>
+    <main>
+        <section>
+            <h2>遊戲簡介</h2>
+            <p>Wordle 是一款有趣且富有挑戰性的猜字遊戲，玩家需要在 6 次嘗試內猜出一個 5 個字母的單字。遊戲將提示你每次輸入的字母是否正確以及其位置是否匹配。</p>
+            <p>這款遊戲考驗你的詞彙量與推理能力，適合與朋友或家人一起玩，享受猜測的樂趣！</p>
+        </section>
+        <section>
+            <h2>遊戲規則</h2>
+            <p>1. 每局遊戲系統會隨機選擇一個 5 個字母的單字。</p>
+            <p>2. 玩家有 6 次機會輸入 5 個字母的猜測單字。</p>
+            <p>3. 系統將根據你的輸入給出提示：</p>
+            <ul>
+                <li><strong>綠色：</strong>字母正確且位置正確。</li>
+                <li><strong>黃色：</strong>字母正確但位置錯誤。</li>
+                <li><strong>灰色：</strong>字母不在單字中。</li>
+            </ul>
+            <p>4. 在限定次數內猜對即可獲勝，否則遊戲失敗並揭曉答案。</p>
+        </section>
+        <div class="btn-container">
+            <a href="game1.html" class="btn-start">開始遊戲</a>
+        </div>
+    </main>
+    <footer>
+        © 2024 Wordle 遊戲，保留所有權利。由你來挑戰頂尖排行！
+    </footer>
+</body>
+</html>
