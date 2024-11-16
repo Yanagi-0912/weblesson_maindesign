@@ -122,6 +122,7 @@ nav a:hover {
     font-size: 2rem;
     margin-bottom: 20px;
 }
+
 .game-list {
     display: flex;
     justify-content: space-around;
