@@ -101,8 +101,6 @@ nav a:hover {
     margin-bottom: 20px;
 }
 
-<<<<<<< HEAD
-=======
 .newgame {
     background-color: #ffffff1c;
     padding: 40px 20px;
@@ -124,7 +122,6 @@ nav a:hover {
     font-size: 2rem;
     margin-bottom: 20px;
 }
->>>>>>> origin/main
 .game-list {
     display: flex;
     justify-content: space-around;
