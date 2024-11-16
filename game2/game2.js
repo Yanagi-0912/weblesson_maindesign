@@ -49,7 +49,7 @@ function generateItem() {
     const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
     board[randomIndex] = 1;
     generateCount++;
-    generateCost = Math.pow(2, generateCount - 1);
+    generateCost = Math.pow(2, generateCount - 1) / itemEfficiency[0];
     updateCostDisplay();
     createBoard();
 }
@@ -141,6 +141,7 @@ function upgradeItem(n) {
     coin -= levelupCost[n];
     levelupCost[n] *= 2;
     itemEfficiency[n] *= 2;
+    updateCostDisplay();
     updateLevelDisplay(n);
     updateEfficiency();
     updateCoinDisplay();
@@ -154,12 +155,19 @@ document.getElementById("double-coin-btn").onclick = doubleCoin;
 document.getElementById("win-start-btn").onclick = generateHighLevelItem;
 
 for (let i = 0; i <= 10; i++) {
-    document.getElementById(`upgrade-btn${i}`).onclick = () => upgradeItem(i);
+    const button = document.getElementById(`upgrade-btn${i}`);
+    if (button) {
+        button.onclick = () => upgradeItem(i);
+    }
 }
 
-// 定时器：每秒生成金币
+
+console.log('productionRate:', productionRate);
+
+// 确保 setInterval 正常执行
 setInterval(() => {
     collectCoins();
+    console.log('Coin collected at:', new Date());
 }, 1000);
 
 // 初始化界面
