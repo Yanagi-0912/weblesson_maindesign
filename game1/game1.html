@@ -7,22 +7,22 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #d4edda; /* 淺綠色背景 */
+            background-color: #d4edda;
             color: #333;
             padding: 20px;
             margin: 0;
-            overflow-y: auto;  /* 允許垂直滾動 */
+            overflow-y: auto;
             height: 100%;
-            background-image: url('wordle-haikei.webp'); /* 設置相對路徑的背景圖片 */
-            background-size: cover;  /* 讓背景圖片覆蓋整個畫面 */
-            background-position: center;  /* 讓圖片居中顯示 */
+            background-image: url('wordle-haikei.webp');
+            background-size: cover;
+            background-position: center;
         }
 
         #container {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            flex-wrap: wrap;  /* 讓容器內容換行，適應不同螢幕 */
+            flex-wrap: wrap;
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
@@ -34,8 +34,8 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-height: 400px;  /* 限制排名板的最大高度 */
-            overflow-y: auto;  /* 使排名板有滾動條 */
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         h2 {
@@ -75,8 +75,8 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 65%;
-            max-height: 90vh;  /* 限制遊戲容器的最大高度 */
-            overflow-y: auto;  /* 使遊戲容器有滾動條 */
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         #timer {
@@ -146,7 +146,6 @@
             background-color: #218838;
         }
 
-        /* 放大並上移開始遊戲按鈕 */
         #start-game-button {
             padding: 15px 30px;
             background-color: #007bff;
@@ -172,7 +171,7 @@
         </div>
 
         <div id="game-container">
-            <button id="start-game-button" onclick="startNewRound()">開始遊戲</button> <!-- 放大並上移 -->
+            <button id="start-game-button" onclick="startNewRound()">開始遊戲</button>
             <h1>Wordle 遊戲</h1>
             <div id="timer">時間: 0 秒</div>
             <div id="game-board"></div>
@@ -189,18 +188,25 @@
 
     <script>
         const words = ["APPLE", "GRAPE", "PEACH", "BERRY", "MANGO", "MARCH", "APRIL", "RESET", "START", "CARRY", "INDIA"];
+        let currentLevel = 0;
         let secretWord, attempts, timer, secondsElapsed;
+        let rankingData = JSON.parse(localStorage.getItem("rankingData")) || [];
+        let playerProgress = JSON.parse(localStorage.getItem("playerProgress")) || {};
 
         function startNewRound() {
-            secretWord = words[Math.floor(Math.random() * words.length)];
+            if (currentLevel >= words.length) {
+                alert("遊戲結束！你已經完成所有關卡！");
+                return;
+            }
+            secretWord = words[currentLevel];
             attempts = 0;
-            secondsElapsed = 0;
-            document.getElementById("timer").textContent = "時間: 0 秒";
+            secondsElapsed = 0;  // 每一輪開始時重置時間為0
+            document.getElementById("timer").textContent = `時間: ${secondsElapsed} 秒`;  // 顯示為0秒
             document.getElementById("message").textContent = "";
             document.getElementById("guess-input").value = "";
             document.getElementById("name-input-section").style.display = "none";
             createBoard();
-            startTimer();
+            startTimer();  // 啟動計時器
         }
 
         function createBoard() {
@@ -256,82 +262,60 @@
             guessInput.value = "";
 
             if (guess === secretWord) {
-                document.getElementById("message").textContent = `恭喜！你猜對了！用時 ${secondsElapsed} 秒`;
-                document.getElementById("name-input-section").style.display = "block";
-                stopTimer();
-            } else if (attempts === 6) {
-                document.getElementById("message").textContent = `遊戲結束！答案是 ${secretWord}。用時 ${secondsElapsed} 秒`;
-                document.getElementById("name-input-section").style.display = "block";
-                stopTimer();
+                document.getElementById("message").textContent = "恭喜你猜對了！";
+                playerProgress[currentLevel].completed = true;
+                playerProgress[currentLevel].time = secondsElapsed;
+                currentLevel++;
+                if (currentLevel < words.length) {
+                    setTimeout(startNewRound, 2000);  // 等待2秒再開始下一輪
+                } else {
+                    endGame();
+                }
             }
         }
 
-        function oneClickSolve() {
-            // 顯示正確答案並結束遊戲
-            document.getElementById("message").textContent = `一步登天！正確答案是 ${secretWord}`;
-            stopTimer();
-
-            // 顯示輸入名字的框並儲存分數
+        function endGame() {
+            alert("遊戲結束！請輸入你的名字來儲存紀錄。");
             document.getElementById("name-input-section").style.display = "block";
-
-            // 更新遊戲板上的每個字母格子為綠色
-            const gameBoard = document.getElementById("game-board");
-            const tiles = gameBoard.children;
-            for (let i = 0; i < secretWord.length; i++) {
-                const tile = tiles[i]; // 每個字母格子
-                tile.textContent = secretWord[i];
-                tile.classList.add("correct"); // 設置為綠色
-            }
-
-            // 當玩家提交分數時，儲存並更新排名
-            document.getElementById("player-name").focus();
-        }   
-
+        }
 
         function saveScore() {
-            const playerName = document.getElementById("player-name").value.trim();
+            const playerName = document.getElementById("player-name").value;
             if (!playerName) {
-                alert("請輸入名字！");
+                alert("請輸入你的名字！");
                 return;
             }
-            
-            const scoreData = { name: playerName, time: secondsElapsed };
-            const rankingList = JSON.parse(localStorage.getItem("rankingList")) || [];
-            rankingList.push(scoreData);
-            rankingList.sort((a, b) => a.time - b.time);
 
-            localStorage.setItem("rankingList", JSON.stringify(rankingList));
-            updateRankingBoard();
+            rankingData.push({ name: playerName, time: secondsElapsed });
+            rankingData.sort((a, b) => a.time - b.time);  // 排序，時間最短的排在最前面
+            if (rankingData.length > 10) {
+                rankingData.pop();  // 保持最多10個名次
+            }
+            localStorage.setItem("rankingData", JSON.stringify(rankingData));
+            localStorage.setItem("playerProgress", JSON.stringify(playerProgress));
+
+            alert("你的分數已儲存！");
+            document.getElementById("player-name").value = "";
+            document.getElementById("name-input-section").style.display = "none";
+            displayRanking();
         }
 
-        function updateRankingBoard() {
-            const rankingList = JSON.parse(localStorage.getItem("rankingList")) || [];
-            const rankingBoard = document.getElementById("ranking-list");
-            rankingBoard.innerHTML = "";
-
-            rankingList.slice(0, 10).forEach((score, index) => {
+        function displayRanking() {
+            const rankingList = document.getElementById("ranking-list");
+            rankingList.innerHTML = "";
+            rankingData.forEach((entry, index) => {
                 const rankItem = document.createElement("div");
                 rankItem.classList.add("rank-item");
-
-                const rankNumber = document.createElement("span");
-                rankNumber.classList.add("rank-number");
-                rankNumber.textContent = `${index + 1}.`;
-
-                const rankName = document.createElement("span");
-                rankName.textContent = score.name;
-
-                const rankTime = document.createElement("span");
-                rankTime.textContent = `${score.time} 秒`;
-
-                rankItem.appendChild(rankNumber);
-                rankItem.appendChild(rankName);
-                rankItem.appendChild(rankTime);
-                rankingBoard.appendChild(rankItem);
+                rankItem.innerHTML = `<span class="rank-number">${index + 1}</span>${entry.name} - ${entry.time} 秒`;
+                rankingList.appendChild(rankItem);
             });
         }
 
-        // 初始更新排名板
-        updateRankingBoard();
+        function oneClickSolve() {
+            alert(`答案是：${secretWord}`);
+        }
+
+        displayRanking();
     </script>
 </body>
 </html>
