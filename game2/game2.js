@@ -49,7 +49,7 @@ function generateItem() {
     const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
     board[randomIndex] = 1;
     generateCount++;
-    generateCost = Math.pow(2, generateCount - 1) / itemEfficiency[0];
+    generateCost = Math.pow(2, generateCount - 1);
     updateCostDisplay();
     createBoard();
 }
@@ -164,11 +164,7 @@ for (let i = 0; i <= 10; i++) {
 
 console.log('productionRate:', productionRate);
 
-// 确保 setInterval 正常执行
-setInterval(() => {
-    collectCoins();
-    console.log('Coin collected at:', new Date());
-}, 1000);
+setInterval(() => {collectCoins();}, 1000);
 
 // 初始化界面
 createBoard();

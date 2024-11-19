@@ -88,6 +88,7 @@ body h1{
     padding: 10px 20px;
     font-size: 16px;
     background-color: darkcyan;
+    color: #ccc;
     border: none;
     cursor: pointer;
 }
@@ -107,6 +108,7 @@ body h1{
     border-bottom: 1px solid #ccc;
     padding: 10px;
     box-sizing: border-box;
+    color: #ccc;
 }
 
 #upgrade-table {
@@ -121,6 +123,7 @@ body h1{
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    color: #ccc;
 }
 
 .upgrade-btn {
