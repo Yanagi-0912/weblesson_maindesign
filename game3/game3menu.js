@@ -10,12 +10,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// 儲存進度到 localStorage
-function saveProgress(level) {
-    // 保存玩家進度，進度為當前關卡數
-    localStorage.setItem("gameProgress", level);
-}
-
 // 根據關卡進度設定按鈕的狀態，鎖定 +2 關卡
 function setButtonState(level, progress, buttonId) {
     const button = document.querySelector(`#level${level}`);
