@@ -1,7 +1,7 @@
 // 當頁面加載時，檢查 localStorage 並設置關卡按鈕的狀態
 document.addEventListener("DOMContentLoaded", function() {
     // 讀取儲存的關卡進度，若無進度則設為 0
-    let progress = localStorage.getItem("game5Progress");
+    let progress = localStorage.getItem("game3Progress");
     progress = progress ? parseInt(progress) : 1; // 預設從關卡 1 開始
 
     // 根據進度鎖定不該解鎖的關卡
