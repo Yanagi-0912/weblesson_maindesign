@@ -29,7 +29,7 @@ function completeLevel(level) {
     // 儲存玩家的最新關卡進度
     saveProgress(level);
     // 更新按鈕狀態
-    let progress = localStorage.getItem("game3Progress");
+    let progress = localStorage.getItem("game5Progress");
     progress = progress ? parseInt(progress) : 1;
     for (let i = 1; i <= 10; i++) {
         setButtonState(i, progress, i);

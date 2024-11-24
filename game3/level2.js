@@ -50,7 +50,7 @@ function Complete() {
 
 function saveProgress(level) {
     // 保存玩家進度
-    localStorage.setItem("gameProgress", level);
+    localStorage.setItem("game3Progress", level);
 }
 
 document.getElementById("sw0").onclick = function () { clicksw(0); };
