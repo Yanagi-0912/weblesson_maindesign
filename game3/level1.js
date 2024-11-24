@@ -1,4 +1,4 @@
-let swstatus = Array(9).fill(0);
+let swstatus = Array(4).fill(0);
 
 //取得所有按鈕的狀態並存入
 function GetAllStatus() {
@@ -32,21 +32,6 @@ function clicksw(index) {
         case 3:
             swstatus[index] = swstatus[index] === 1 ? 0 : 1;
             break;
-        case 4:
-            swstatus[index] = swstatus[index] === 1 ? 0 : 1;
-            break;
-        case 5:
-            swstatus[index] = swstatus[index] === 1 ? 0 : 1;
-            break;
-        case 6:
-            swstatus[index] = swstatus[index] === 1 ? 0 : 1;
-            break;
-        case 7:
-            swstatus[index] = swstatus[index] === 1 ? 0 : 1;
-            break;
-        case 8:
-            swstatus[index] = swstatus[index] === 1 ? 0 : 1;
-            break;
         default:
             console.warn(`Invalid index: ${index}`);
             break;
@@ -71,8 +56,3 @@ document.getElementById("sw0").onclick = function () { clicksw(0); };
 document.getElementById("sw1").onclick = function () { clicksw(1); };
 document.getElementById("sw2").onclick = function () { clicksw(2); };
 document.getElementById("sw3").onclick = function () { clicksw(3); };
-document.getElementById("sw4").onclick = function () { clicksw(4); };
-document.getElementById("sw5").onclick = function () { clicksw(5); };
-document.getElementById("sw6").onclick = function () { clicksw(6); };
-document.getElementById("sw7").onclick = function () { clicksw(7); };
-document.getElementById("sw8").onclick = function () { clicksw(8); };
