@@ -1,0 +1,156 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #d4edda;
+    color: #333;
+    padding: 20px;
+    margin: 0;
+    overflow-y: auto;
+    height: 100%;
+    background-image: url('wordle-haikei.webp');
+    background-size: cover;
+    background-position: center;
+}
+
+#container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+#ranking-board {
+    width: 250px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+.rank-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 1em;
+    border-bottom: 1px solid #eee;
+}
+
+.rank-item:first-child {
+    font-weight: bold;
+    color: #ffb400;
+}
+
+.rank-item:first-child .rank-number::before {
+    content: "👑 ";
+}
+
+.rank-number {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 65%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+#timer, #level-progress {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(5, 40px);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tile {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    border: 2px solid #ddd;
+    color: white;
+    background-color: #888;
+}
+
+.correct {
+    background-color: #6aaa64;
+}
+
+.present {
+    background-color: #c9b458;
+}
+
+.absent {
+    background-color: #787c7e;
+}
+
+#message, #name-input-section {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#guess-input {
+    padding: 8px;
+    font-size: 1em;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+#one-click-button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 1em;
+}
+
+#one-click-button:hover {
+    background-color: #218838;
+}
+
+#start-game-button {
+    padding: 15px 30px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+#start-game-button:hover {
+    background-color: #0056b3;
+}
