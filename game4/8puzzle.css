@@ -1,54 +1,89 @@
-::selection {background: transparent;}
-p{margin: 0; font: 12px/150% Arial; text-align: center; color: #999;}
-p a{color: #888;}
+/* 標題區域樣式 */
+#header {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
 
-#controls{text-align: center;}
-#controls button{
-	cursor: pointer; /*設置鼠標懸停在按鈕上時的鼠標樣式為手型*/
-	outline: none;	 /*去掉按鈕點擊時的默認輪廓線*/
-	padding: 10px 20px;
-	margin: 25px 2px;
-	border: 0;
-	border-radius: 3px;
-	background: #081212;
-	font: bold 14px Impect;
-	text-align: center;
-	text-transform: uppercase;
-	text-shadow: -1px -1px 0 rgba(0,0,0, 0.5);
-	color: #ffffff;
+#header h1 {
+    font-size: 28px;
+    color: #003333;
+    font-family: "Impact", Arial, sans-serif;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
-#controls button:hover{background: #003333;}
 
-#puzzle{
-	position: relative;
-	width: 244px;
-	height: 244px;
-	margin: 0 auto;
-	margin-top: 80px;
-	border: 8px solid rgb(8, 19, 19);
-	border-radius: 4px;
+#header p {
+    font-size: 16px;
+    color: #555;
+    margin-top: 5px;
+    font-family: "Arial", sans-serif;
 }
-#puzzle span{
-	position: absolute;
-	display: block;
-	width: 80px;
-	height: 80px;
-	border-radius: 4px;
-}
-#puzzle span.number{
-	cursor: pointer;
-	font: bold 36px/80px Impect;
-	text-align: center;
-	text-shadow: -1px -1px 0 rgba(170, 50, 50, 0.5);
-	color: rgb(58, 46, 163);
-}
-#puzzle span.empty{background: transparent;}
-#puzzle span.number.light{background: rgb(119, 114, 124);}
-#puzzle span.number.dark{background: rgb(16, 13, 15);}
 
-#puzzle.animate span{
-	-webkit-transition: 0.15s left, 0.15s top;
- 	transition: 0.15s left, 0.15s top; /*left、top 會在0.15s內被改變*/
-    /*-webkit-transition 用於支援WebKit（例如Chrome和Safari等）的瀏覽器*/
-    /*transition 則是標準的CSS3屬性*/
+/* 控制按鈕樣式 */
+#controls {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#controls button {
+    cursor: pointer;
+    outline: none;
+    padding: 10px 20px;
+    margin: 25px 2px;
+    border: 0;
+    border-radius: 3px;
+    background: #081212;
+    font: bold 14px Impact;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+}
+
+#controls button:hover {
+    background: #003333;
+}
+
+/* 拼圖區域樣式 */
+#puzzle {
+    position: relative;
+    width: 244px;
+    height: 244px;
+    margin: 0 auto;
+    margin-top: 80px;
+    border: 8px solid rgb(8, 19, 19);
+    border-radius: 4px;
+}
+
+#puzzle span {
+    position: absolute;
+    display: block;
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+}
+
+#puzzle span.number {
+    cursor: pointer;
+    font: bold 36px/80px Impact;
+    text-align: center;
+    text-shadow: -1px -1px 0 rgba(170, 50, 50, 0.5);
+    color: rgb(58, 46, 163);
+}
+
+#puzzle span.empty {
+    background: transparent;
+}
+
+#puzzle span.number.light {
+    background: rgb(119, 114, 124);
+}
+
+#puzzle span.number.dark {
+    background: rgb(16, 13, 15);
+}
+
+#puzzle.animate span {
+    -webkit-transition: 0.15s left, 0.15s top;
+    transition: 0.15s left, 0.15s top;
 }
