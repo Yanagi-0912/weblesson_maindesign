@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金頭腦 - 關卡 4</title>
+    <link rel="stylesheet" href="game5menu.css">
+</head>
+<body>
+    <header>
+        <h1>金頭腦 - 關卡 4</h1>
+        <nav>
+            <a href="game5menu.html">返回目錄</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>挑戰開始！</h2>
+        <p>題目：請問光速的近似值是多少？（單位：公里/秒）</p>
+
+        <div class="game-interaction">
+            <!-- 選擇題選項 -->
+            <button class="level-button" onclick="checkAnswer('A')">A. 30,000</button>
+            <button class="level-button" onclick="checkAnswer('B')">B. 300,000</button>
+            <button class="level-button" onclick="checkAnswer('C')">C. 3,000</button>
+            <button class="level-button" onclick="checkAnswer('D')">D. 3,000,000</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 糞Game獵人 <a href="../privacy.html">隱私政策</a> | <a href="../TermsOfUse.html">使用條款</a></p>
+    </footer>
+
+    <script>
+        // 確認答案
+        function checkAnswer(answer) {
+            if (answer === 'B') {
+                alert('恭喜你答對了！');
+                completeLevel(4); // 完成關卡 4
+            } else {
+                alert('答錯了！再試一次！');
+            }
+        }
+
+        // 完成關卡並更新進度
+        function completeLevel(level) {
+            let progress = localStorage.getItem("game5Progress");
+            progress = progress ? parseInt(progress) : 1;
+
+            // 確保新進度大於目前進度
+            if (level >= progress) {
+                localStorage.setItem("game5Progress", level + 1); // 解鎖下一關
+            }
+
+            // 跳轉回目錄
+            window.location.href = "../game5/game5menu.html";
+        }
+    </script>
+</body>
+</html>
