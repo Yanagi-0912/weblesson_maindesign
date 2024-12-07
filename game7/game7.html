@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幾A幾B 猜數字遊戲</title>
+    <link rel="stylesheet" href="game7.css">
+</head>
+<body>
+    <div class="container">
+        <h1>幾A幾B 猜數字遊戲</h1>
+        <p>猜出4個不重複的隨機數字，位置正確為A，數字正確但位置錯誤為B。</p>
+        <div id="game">
+            <input type="text" id="guessInput" maxlength="4" placeholder="輸入4位數字">
+            <button id="submitGuess">猜</button>
+        </div>
+        <div id="result">
+            <ul id="guessList"></ul>
+        </div>
+        <p>嘗試次數: <span id="attemptsCount">0</span></p>
+        <button id="resetGame">重新開始</button>
+    </div>
+    <script src="game7.js"></script>
+</body>
+</html>
