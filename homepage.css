@@ -40,7 +40,7 @@ nav a:hover {
 
 /* Hero Section */
 .hero {
-    background: url('https://via.placeholder.com/1500x600') no-repeat center center;
+    background: url('game.avif') no-repeat center center;
     background-size: cover;
     color: white;
     text-align: center;
