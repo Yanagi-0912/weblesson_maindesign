@@ -1,7 +1,7 @@
-// 遊戲核心變數
 let secretNumber = [];
 let gameActive = true;
 let attempts = 0;
+let playerName = "";
 
 // 初始化遊戲
 function initializeGame() {
@@ -12,6 +12,8 @@ function initializeGame() {
     document.getElementById("guessInput").value = "";
     document.getElementById("attemptsCount").textContent = attempts;  // 顯示嘗試次數
     console.log("隱藏數字（測試用）:", secretNumber.join(""));
+    playerName = "";  // 重置玩家名稱
+    document.getElementById("playerName").value = "";  // 清空名稱欄位
 }
 
 // 產生不重複的4位數
@@ -58,6 +60,7 @@ function handleGuess() {
     if (a === 4) {
         gameActive = false;
         alert("恭喜你猜對了！答案是：" + secretNumber.join("") + "。總共猜了 " + attempts + " 次！");
+        saveLeaderboard();
     }
 }
 
@@ -83,5 +86,42 @@ document.getElementById("resetGame").addEventListener("click", initializeGame);
 // 提交猜測
 document.getElementById("submitGuess").addEventListener("click", handleGuess);
 
+// 提交玩家名稱
+document.getElementById("submitName").addEventListener("click", () => {
+    playerName = document.getElementById("playerName").value.trim();
+    if (playerName === "") {
+        alert("請輸入玩家名稱！");
+    }
+});
+
+// 保存排行榜資料
+function saveLeaderboard() {
+    if (playerName === "") {
+        alert("請先輸入玩家名稱！");
+        return;
+    }
+
+    const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+    leaderboard.push({ name: playerName, attempts: attempts });
+    leaderboard.sort((a, b) => a.attempts - b.attempts);  // 按嘗試次數排序
+
+    localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+    displayLeaderboard();
+}
+
+// 顯示排行榜
+function displayLeaderboard() {
+    const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+    const leaderboardList = document.getElementById("leaderboard");
+    leaderboardList.innerHTML = "";
+
+    leaderboard.forEach(entry => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${entry.name}: ${entry.attempts} 次`;
+        leaderboardList.appendChild(listItem);
+    });
+}
+
 // 初始化
 initializeGame();
+displayLeaderboard();

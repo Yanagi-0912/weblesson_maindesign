@@ -7,19 +7,40 @@
     <link rel="stylesheet" href="game7.css">
 </head>
 <body>
-    <div class="container">
-        <h1>幾A幾B 猜數字遊戲</h1>
-        <p>猜出4個不重複的隨機數字，位置正確為A，數字正確但位置錯誤為B。</p>
-        <div id="game">
-            <input type="text" id="guessInput" maxlength="4" placeholder="輸入4位數字">
-            <button id="submitGuess">猜</button>
+    <div class="main-container">
+        <!-- 排行榜區域 -->
+        <div class="leaderboard-container">
+            <h2>排行榜</h2>
+            <ul id="leaderboard"></ul>
         </div>
-        <div id="result">
-            <ul id="guessList"></ul>
+
+        <!-- 遊戲區塊 -->
+        <div class="game-container">
+            <h1>幾A幾B 猜數字遊戲</h1>
+            <p>猜出4個不重複的隨機數字，位置正確為A，數字正確但位置錯誤為B。</p>
+
+            <div id="game">
+                <input type="text" id="guessInput" maxlength="4" placeholder="輸入4位數字">
+                <button id="submitGuess">猜</button>
+            </div>
+
+            <div id="result">
+                <ul id="guessList"></ul>
+            </div>
+
+            <p>嘗試次數: <span id="attemptsCount">0</span></p>
+
+            <button id="resetGame">重新開始</button>
+
+            <!-- 新增玩家名字輸入欄位 -->
+            <div id="playerNameSection">
+                <p>請輸入你的名字：</p>
+                <input type="text" id="playerName" placeholder="玩家名稱">
+                <button id="submitName">提交名稱</button>
+            </div>
         </div>
-        <p>嘗試次數: <span id="attemptsCount">0</span></p>
-        <button id="resetGame">重新開始</button>
     </div>
+
     <script src="game7.js"></script>
 </body>
 </html>
