@@ -83,6 +83,68 @@ function makeMove(row, col) {
     } else {
         currentPlayer = currentPlayer === "black" ? "white" : "black"; // 切換玩家
         statusDisplay.textContent = `${currentPlayer === "black" ? "黑子" : "白子"}的回合`;
+
+        // 如果遊戲還在進行中，且當前不是玩家對戰模式
+        if (isGameActive && gameMode !== modes.PVP && currentPlayer === "white") {
+            setTimeout(() => {
+                if (gameMode === modes.EASY) {
+                    easyAIMove();
+                } else if (gameMode === modes.MEDIUM) {
+                    mediumAIMove();
+                } else if (gameMode === modes.HARD) {
+                    hardAIMove();
+                }
+            }, 500); // 模擬電腦思考時間
+        }
+    }
+}
+
+// 隨機選擇一個空格來下棋（簡單模式）
+function easyAIMove() {
+    const emptyCells = [];
+    for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
+            if (board[row][col] === null) {
+                emptyCells.push({ row, col });
+            }
+        }
+    }
+    if (emptyCells.length > 0) {
+        const randomMove = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        makeMove(randomMove.row, randomMove.col);
+    }
+}
+
+// 中等模式（略簡單的策略，選擇一個最近的空格）
+function mediumAIMove() {
+    const emptyCells = [];
+    for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
+            if (board[row][col] === null) {
+                emptyCells.push({ row, col });
+            }
+        }
+    }
+    // 假設最簡單的策略是選擇距離當前棋子的最近空格
+    if (emptyCells.length > 0) {
+        const move = emptyCells[0]; // 這裡可以加入更進階的判斷
+        makeMove(move.row, move.col);
+    }
+}
+
+// 困難模式（更強的策略）
+function hardAIMove() {
+    const emptyCells = [];
+    for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
+            if (board[row][col] === null) {
+                emptyCells.push({ row, col });
+            }
+        }
+    }
+    if (emptyCells.length > 0) {
+        const move = emptyCells[0]; // 這裡可以加入更加複雜的策略
+        makeMove(move.row, move.col);
     }
 }
 
