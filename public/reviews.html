@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查看評論</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .container {
+            background-color: white;
+            width: 90%;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .game-section {
+            margin-bottom: 30px;
+        }
+        .game-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .rating {
+            color: #f39c12;
+            font-size: 1.5em;
+        }
+        .review-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+        .review-item:last-child {
+            border-bottom: none;
+        }
+        .comment {
+            margin: 10px 0;
+            color: #555;
+        }
+        .timestamp {
+            font-size: 0.9em;
+            color: #888;
+        }
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-size: 1.2em;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>玩家評論列表</h1>
+    </header>
+
+    <div class="container" id="reviewsContainer">
+        <!-- 評論將透過 JavaScript 動態顯示 -->
+    </div>
+
+    <footer>
+        <p>&copy; 2024 糞Game獵人</p>
+    </footer>
+
+    <!-- JavaScript 程式碼 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const reviewsContainer = document.getElementById("reviewsContainer");
+
+            // 遊戲ID與名稱對應
+            const gameNames = {
+                "1": "WORDLE",
+                "2": "模擬宇宙",
+                "3": "數字拼圖",
+                "4": "我問你答",
+                "5": "快樂五子棋",
+                "6": "幾A幾B",
+                "7": "按鈕遊戲"
+            };
+
+            // 從 Local Storage 中讀取評論資料
+            const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+
+            if (reviews.length === 0) {
+                reviewsContainer.innerHTML = "<p class='empty-message'>目前尚未有任何評論。</p>";
+            } else {
+                // 依照遊戲分類評論
+                const groupedReviews = {};
+
+                reviews.forEach(review => {
+                    const game = gameNames[review.game] || "未知遊戲";
+                    if (!groupedReviews[game]) {
+                        groupedReviews[game] = [];
+                    }
+                    groupedReviews[game].push(review);
+                });
+
+                // 顯示每個遊戲的評論
+                for (const gameName in groupedReviews) {
+                    const gameReviews = groupedReviews[gameName];
+                    const section = document.createElement("div");
+                    section.classList.add("game-section");
+
+                    const title = document.createElement("div");
+                    title.classList.add("game-title");
+                    title.textContent = gameName;
+
+                    section.appendChild(title);
+
+                    gameReviews.forEach(review => {
+                        const reviewItem = document.createElement("div");
+                        reviewItem.classList.add("review-item");
+
+                        reviewItem.innerHTML = `
+                            <div class="rating">${"★".repeat(review.rating)}</div>
+                            <div class="comment">${review.comment}</div>
+                            <div class="timestamp">${review.time}</div>
+                        `;
+
+                        section.appendChild(reviewItem);
+                    });
+
+                    reviewsContainer.appendChild(section);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
