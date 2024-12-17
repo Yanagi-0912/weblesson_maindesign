@@ -101,7 +101,7 @@
     </header>
 
     <div class="box" id="signup">
-        <form id="fm2" action="" method="post">
+        <form id="signupform">
             <section class="row">
                 <label for="username">帳號:</label>
                 <input id="username" name="username" class="required" type="text" value="" size="25" autocomplete="off"/>
@@ -127,5 +127,57 @@
     <footer>
         <p>&copy; 糞Game獵人 <a href="privacy.html">隱私政策</a> | <a href="TermsOfUse.html">使用條款</a></p>
     </footer>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#signupform').on('submit', function(event) {
+                event.preventDefault();
+
+                const username = $('#username').val().trim();
+                const password = $('#password').val().trim();
+
+                // 重置提示訊息
+                $('#username-warning').hide();
+                $('#password-warning').hide();
+                $('#message').hide().text("");
+
+                let isValid = true;
+
+                if (!username) {
+                    $('#username-warning').show();
+                    isValid = false;
+                }
+
+                if (!password) {
+                    $('#password-warning').show();
+                    isValid = false;
+                }
+
+                if (!isValid) return;
+
+                // 使用 AJAX 將註冊資料傳送至後端
+                $.ajax({
+                    url: '/signup',  // 後端處理註冊的路由
+                    method: 'POST',
+                    dataType: 'json',
+                    data: { username: username, password: password },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#message').css('color', 'green').text(response.message).show();
+                            // 可選：導向至登入頁面或首頁
+                            setTimeout(function() {
+                                window.location.href = "login.html";
+                            }, 2000);
+                        } else {
+                            $('#message').css('color', 'red').text(response.message).show();
+                        }
+                    },
+                    error: function() {
+                        $('#message').css('color', 'red').text("伺服器發生錯誤，請稍後再試").show();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
