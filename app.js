@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-
 const app = express();
 
 mongoose.connect('mongodb://127.0.0.1:27017/weblessonDB')
@@ -9,14 +8,13 @@ mongoose.connect('mongodb://127.0.0.1:27017/weblessonDB')
     .catch(err => console.error(err));
 
 
-
-const Account = mongoose.model('Account', AccountData);
-
 const AccountData = new mongoose.Schema({
     account: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String, required: true }
 });
+
+const Account = mongoose.model('Account', AccountData);
 
 
 app.use(express.json());
