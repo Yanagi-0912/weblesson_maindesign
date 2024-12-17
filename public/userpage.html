@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>User Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .avatar-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: inline-block;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .row {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .btn-submit {
+            background-color: #ff4500;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background-color: #e03e00;
+        }
+
+        #message, #html-message {
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        footer a {
+            color: #ff6347;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>使用者頁面</h1>
+        <nav>
+            <a href="homepage.html">首頁</a>
+            <a href="gamelist.html">遊戲清單</a>
+            <a href="aboutus.html">關於我們</a>
+            <a href="login.html">登入</a>
+            <a href="signup.html">註冊</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- 頭像上傳表單 -->
+        <div class="avatar-wrapper">
+            <div class="avatar" id="avatar-preview"></div>
+        </div>
+        <form id="avatar-form" enctype="multipart/form-data">
+            <div class="row">
+                <label for="avatarFile">選擇頭像圖片 (建議150x150px):</label>
+                <input type="file" id="avatarFile" name="avatar" accept="image/*" />
+            </div>
+            <div class="row">
+                <input class="btn-submit" type="submit" value="上傳圖片" />
+            </div>
+            <div id="message"></div>
+        </form>
+
+        <hr/>
+
+        <!-- HTML檔上傳表單 -->
+        <form id="html-form" enctype="multipart/form-data">
+            <div class="row">
+                <label for="htmlFile">上傳網頁檔案(HTML):</label>
+                <input type="file" id="htmlFile" name="htmlFile" accept=".html" />
+            </div>
+            <div class="row">
+                <input class="btn-submit" type="submit" value="上傳HTML" />
+            </div>
+            <div id="html-message"></div>
+        </form>
+
+    </div>
+
+    <footer>
+        <p>&copy; 糞Game獵人 <a href="privacy.html">隱私政策</a> | <a href="TermsOfUse.html">使用條款</a></p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 即時預覽使用者選擇的圖片
+            $('#avatarFile').on('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#avatar-preview').css('background-image', `url(${e.target.result})`);
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#avatar-preview').css('background-image', '');
+                }
+            });
+
+            // 上傳頭像圖片
+            $('#avatar-form').on('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                $('#message').hide().text('');
+
+                $.ajax({
+                    url: '/upload-avatar',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#message').css('color', 'green').text("圖片上傳成功！").show();
+                        } else {
+                            $('#message').css('color', 'red').text(response.message || "上傳失敗").show();
+                        }
+                    },
+                    error: function() {
+                        $('#message').css('color', 'red').text("伺服器發生錯誤，請稍後再試。").show();
+                    }
+                });
+            });
+
+            // 上傳HTML檔案
+            $('#html-form').on('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                $('#html-message').hide().text('');
+
+                $.ajax({
+                    url: '/upload-html', // 上傳HTML檔案的後端路由
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#html-message').css('color', 'green').text("HTML上傳成功！").show();
+                        } else {
+                            $('#html-message').css('color', 'red').text(response.message || "上傳失敗").show();
+                        }
+                    },
+                    error: function() {
+                        $('#html-message').css('color', 'red').text("伺服器發生錯誤，請稍後再試。").show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

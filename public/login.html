@@ -93,6 +93,17 @@
         footer a:hover {
             text-decoration: underline;
         }
+        #message {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
+        #username-warning,
+        #password-warning {
+            display:none;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -112,18 +123,19 @@
             <section class="row">
                 <label for="username">帳號:</label>
                 <input id="username" name="username" class="required" type="text" value="" size="25" autocomplete="off"/>
-                <span id="username-warning" style="display:none; color: red;">請輸入用戶名</span>
+                <span id="username-warning">請輸入用戶名</span>
             </section>
           
             <section class="row">
                 <label for="password">密碼:</label>
                 <input id="password" name="password" class="required" type="password" value="" size="25" autocomplete="off"/>
-                <span id="password-warning" style="display:none; color: red;">請輸入密碼</span>
+                <span id="password-warning">請輸入密碼</span>
             </section>
       
             <section class="row btn-row">
-                <input class="btn-submit" name="submit" value="登錄" type="submit" />
+                <input class="btn-submit" name="submit" value="登入" type="submit" />
             </section>
+            <div id="message"></div>
 
             <section class="row">
                 <a class="forget-password" href="ForgotPass.html">忘記密碼？</a>
@@ -138,7 +150,7 @@
     <script>
         $(document).ready(function () {
             $('#loginform').submit(function (event) {
-                event.preventDefault();
+                event.preventDefault(); 
 
                 const username = $('#username').val().trim();
                 const password = $('#password').val().trim();
@@ -159,7 +171,6 @@
                 }
                 if (!isValid) return;
 
-                // 使用 AJAX 呼叫後端 API
                 $.ajax({
                     url: '/login',
                     method: 'POST',
@@ -168,8 +179,7 @@
                     success: function(response) {
                         if (response.success) {
                             $('#message').css('color', 'green').text(response.message).show();
-                            // 登入成功後延遲跳轉至首頁（假設為 homepage.html）
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 window.location.href = "homepage.html";
                             }, 2000);
                         } else {
