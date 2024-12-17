@@ -16,10 +16,27 @@
             color: white;
             text-align: center;
             padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
         }
         header h1 {
             margin: 0;
             font-size: 2em;
+        }
+        header .home-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        header .home-btn:hover {
+            background-color: #0056b3;
         }
         .container {
             background-color: white;
@@ -47,6 +64,18 @@
         textarea {
             height: 120px;
         }
+        .star-rating {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .star {
+            font-size: 2em;
+            color: #ccc;
+            cursor: pointer;
+        }
+        .star.selected {
+            color: #f39c12;
+        }
         .btn-submit {
             background-color: #28a745;
             color: white;
@@ -72,6 +101,7 @@
 </head>
 <body>
     <header>
+        <a href="homepage.html" class="home-btn">回首頁</a>
         <h1>撰寫評論</h1>
     </header>
 
@@ -90,6 +120,16 @@
                 <option value="7">按鈕遊戲</option>
             </select>
 
+            <!-- 星星評分 -->
+            <label>評分:</label>
+            <div class="star-rating" id="starRating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+
             <!-- 評論內容 -->
             <label for="comment">評論內容:</label>
             <textarea id="comment" placeholder="輸入您的評論..." required></textarea>
@@ -105,22 +145,42 @@
 
     <!-- JavaScript 程式碼 -->
     <script>
+        const stars = document.querySelectorAll('.star');
+        let rating = 0;
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                rating = parseInt(this.getAttribute('data-value'));
+                updateStars();
+            });
+        });
+
+        function updateStars() {
+            stars.forEach(star => {
+                if (parseInt(star.getAttribute('data-value')) <= rating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+
         document.getElementById("reviewForm").addEventListener("submit", function(e) {
             e.preventDefault();
 
-            // 獲取選擇的遊戲和評論內容
+            // 獲取選擇的遊戲、評論內容和評分
             const game = document.getElementById("gameSelect").value;
             const comment = document.getElementById("comment").value.trim();
 
-            // 輸入驗證
-            if (!game || comment === "") {
-                alert("請選擇遊戲並填寫評論內容！");
+            if (!game || comment === "" || rating === 0) {
+                alert("請選擇遊戲、填寫評論內容並給出評分！");
                 return;
             }
 
             // 建立評論資料
             const review = {
                 game: game,
+                rating: rating,
                 comment: comment,
                 time: new Date().toLocaleString()
             };
@@ -132,6 +192,7 @@
 
             alert("評論已成功提交！");
             document.getElementById("reviewForm").reset();
+            updateStars();
         });
     </script>
 </body>

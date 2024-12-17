@@ -30,16 +30,25 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
-        .review-item {
-            border-bottom: 1px solid #ccc;
-            padding: 15px 0;
-        }
-        .review-item:last-child {
-            border-bottom: none;
+        .game-section {
+            margin-bottom: 30px;
         }
         .game-title {
             font-weight: bold;
             color: #333;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .rating {
+            color: #f39c12;
+            font-size: 1.5em;
+        }
+        .review-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+        .review-item:last-child {
+            border-bottom: none;
         }
         .comment {
             margin: 10px 0;
@@ -98,25 +107,46 @@
             const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
 
             if (reviews.length === 0) {
-                // 如果沒有評論，顯示提示訊息
                 reviewsContainer.innerHTML = "<p class='empty-message'>目前尚未有任何評論。</p>";
             } else {
-                // 顯示所有評論
+                // 依照遊戲分類評論
+                const groupedReviews = {};
+
                 reviews.forEach(review => {
-                    const reviewItem = document.createElement("div");
-                    reviewItem.classList.add("review-item");
-
-                    // 取得遊戲名稱
-                    const gameName = gameNames[review.game] || "未知遊戲";
-
-                    reviewItem.innerHTML = `
-                        <p class="game-title">遊戲：${gameName}</p>
-                        <p class="comment">${review.comment}</p>
-                        <p class="timestamp">提交時間: ${review.time}</p>
-                    `;
-
-                    reviewsContainer.appendChild(reviewItem);
+                    const game = gameNames[review.game] || "未知遊戲";
+                    if (!groupedReviews[game]) {
+                        groupedReviews[game] = [];
+                    }
+                    groupedReviews[game].push(review);
                 });
+
+                // 顯示每個遊戲的評論
+                for (const gameName in groupedReviews) {
+                    const gameReviews = groupedReviews[gameName];
+                    const section = document.createElement("div");
+                    section.classList.add("game-section");
+
+                    const title = document.createElement("div");
+                    title.classList.add("game-title");
+                    title.textContent = gameName;
+
+                    section.appendChild(title);
+
+                    gameReviews.forEach(review => {
+                        const reviewItem = document.createElement("div");
+                        reviewItem.classList.add("review-item");
+
+                        reviewItem.innerHTML = `
+                            <div class="rating">${"★".repeat(review.rating)}</div>
+                            <div class="comment">${review.comment}</div>
+                            <div class="timestamp">${review.time}</div>
+                        `;
+
+                        section.appendChild(reviewItem);
+                    });
+
+                    reviewsContainer.appendChild(section);
+                }
             }
         });
     </script>
