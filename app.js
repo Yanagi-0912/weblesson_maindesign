@@ -39,7 +39,26 @@ app.post('/login', async (req, res) => {
         return res.json({ success: false, message: '帳號或密碼錯誤' });
     }
 });
+app.post('/signup', async (req, res) => {
+    const { username, password } = req.body;
 
+    // 基本驗證（實務上應該更嚴謹，如檢查密碼強度等）
+    if (!username || !password) {
+        return res.json({ success: false, message: '請輸入帳號和密碼' });
+    }
+
+    // 檢查帳號是否已存在
+    const existingUser = await Account.findOne({ username });
+    if (existingUser) {
+        return res.json({ success: false, message: '帳號已存在' });
+    }
+
+    // 建立新用戶並存入資料庫 (此處未使用密碼雜湊，實務上請使用 bcrypt 等)
+    const newUser = new Account({ username, password });
+    await newUser.save();
+
+    res.json({ success: true, message: '註冊成功！' });
+});
 app.listen(3000, () => {
     console.log(`Server listening on http://localhost:3000/homepage.html`);
 });
