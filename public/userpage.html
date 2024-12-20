@@ -93,6 +93,21 @@
             display: none;
         }
 
+        #html-preview-link {
+            margin-top: 5px;
+            display: none;
+        }
+
+        #html-preview-link a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: normal;
+        }
+
+        #html-preview-link a:hover {
+            text-decoration: underline;
+        }
+
         footer {
             background-color: #333;
             color: white;
@@ -126,10 +141,12 @@
     </header>
 
     <div class="container">
-        <!-- 頭像上傳表單 -->
+        <!-- 頭像顯示區 -->
         <div class="avatar-wrapper">
             <div class="avatar" id="avatar-preview"></div>
         </div>
+
+        <!-- 頭像上傳表單 -->
         <form id="avatar-form" enctype="multipart/form-data">
             <div class="row">
                 <label for="avatarFile">選擇頭像圖片 (建議150x150px):</label>
@@ -153,6 +170,7 @@
                 <input class="btn-submit" type="submit" value="上傳HTML" />
             </div>
             <div id="html-message"></div>
+            <div id="html-preview-link"></div>
         </form>
 
     </div>
@@ -164,6 +182,18 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         $(document).ready(function() {
+            // 載入頁面時，檢查使用者資訊並顯示頭像
+            $.get('/user-info', function(data) {
+                if (data.loggedIn) {
+                    if (data.avatarUrl) {
+                        $('#avatar-preview').css('background-image', `url(${data.avatarUrl})`);
+                    }
+                } else {
+                    // 未登入時，可顯示預設頭像(若需要)
+                    // $('#avatar-preview').css('background-image', 'url("/default/default-avatar.png")');
+                }
+            });
+
             // 即時預覽使用者選擇的圖片
             $('#avatarFile').on('change', function() {
                 const file = this.files[0];
@@ -195,6 +225,10 @@
                     success: function(response) {
                         if (response.success) {
                             $('#message').css('color', 'green').text("圖片上傳成功！").show();
+                            // 更新頭像(伺服器回傳的avatarUrl)
+                            if (response.avatarUrl) {
+                                $('#avatar-preview').css('background-image', `url(${response.avatarUrl})`);
+                            }
                         } else {
                             $('#message').css('color', 'red').text(response.message || "上傳失敗").show();
                         }
@@ -211,6 +245,7 @@
                 const formData = new FormData(this);
 
                 $('#html-message').hide().text('');
+                $('#html-preview-link').hide().empty();
 
                 $.ajax({
                     url: '/upload-html', // 上傳HTML檔案的後端路由
@@ -222,6 +257,11 @@
                     success: function(response) {
                         if (response.success) {
                             $('#html-message').css('color', 'green').text("HTML上傳成功！").show();
+                            if (response.fileUrl) {
+                                $('#html-preview-link')
+                                    .show()
+                                    .html(`檢視你的HTML檔案：<a href="${response.fileUrl}" target="_blank">${response.fileUrl}</a>`);
+                            }
                         } else {
                             $('#html-message').css('color', 'red').text(response.message || "上傳失敗").show();
                         }

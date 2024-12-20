@@ -5,6 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>糞Game獵人</title>
     <link rel="stylesheet" href="homepage.css">
+    <style>
+        header {
+            position: relative;
+        }
+
+        .dropdown-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .dropdown-btn, .user-avatar-btn {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border: none;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .user-avatar-btn {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .dropdown-btn:hover, .user-avatar-btn:hover {
+            background-color: #444;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 150px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f4f4f4;
+        }
+
+        .dropdown-container:hover .dropdown-content {
+            display: block;
+        }
+
+        header nav {
+            display: inline-block;
+        }
+
+        .username-label {
+            position: absolute;
+            right: 80px;
+            top: 25px;
+            color: white;
+            font-weight: bold;
+            display: none; /* 預設隱藏，登入後才顯示 */
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -18,6 +90,19 @@
             <a href="review.html">輸入遊戲評價</a>
             <a href="reviews.html">查看遊戲評價</a>
         </nav>
+
+        <span class="username-label" id="username-label"></span>
+
+        <!-- 下拉式選單容器 -->
+        <div class="dropdown-container" id="dropdown-container">
+            <!-- 預設為「更多」按鈕 -->
+            <button class="dropdown-btn" id="dropdown-btn">更多</button>
+            <div class="dropdown-content" id="dropdown-content">
+                <a href="userpage.html">我的資料</a>
+                <a href="settings.html">設定</a>
+                <a href="logout.html">登出</a>
+            </div>
+        </div>
     </header>
 
     <section class="hero">
@@ -43,7 +128,6 @@
             <div class="game-item">
                 <img src="HomepageSRC/images.png" alt="數字拼圖">
                 <h4>數字拼圖</h4>
-
                 <a href="game4/game4menu.html"><button>開始遊戲</button></a>
                 <a href="game4/reviews.html"><button>查看評論</button></a>
             </div>
@@ -54,5 +138,34 @@
         <p>&copy; 糞Game獵人 <a href="privacy.html">隱私政策</a> | <a href="TermsOfUse.html">使用條款</a></p>
     </footer>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            // 檢查使用者登入狀態
+            $.get('/user-info', function(data){
+                if (data.loggedIn) {
+                    // 已登入，顯示頭像與使用者名稱
+                    $('#dropdown-btn').remove(); // 移除「更多」按鈕
+
+                    const avatarBtn = $('<button class="user-avatar-btn" id="avatar-btn"></button>');
+                    if (data.avatarUrl) {
+                        avatarBtn.css('background-image', `url(${data.avatarUrl})`);
+                    } else {
+                        avatarBtn.css('background-color','#666');
+                    }
+
+                    $('#dropdown-container').prepend(avatarBtn);
+                    $('#username-label').text(data.username).show();
+                } else {
+                    // 未登入：確保顯示「更多」按鈕，不顯示頭像和帳號
+                    // 預設頁面已經有「更多」按鈕，所以不用特別添加
+                    // 確保 username-label 隱藏
+                    $('#username-label').hide();
+                    // 確保若原本顯示過頭像按鈕(理論上不會顯示，但以防萬一)
+                    $('#avatar-btn').remove();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
