@@ -80,8 +80,6 @@ function init() {
     window.addEventListener('resize', onWindowResize);
 }
 
-
-
 function onKeyDown(e) {
     if (finished) return;
     // 左右鍵控制X方向移動
