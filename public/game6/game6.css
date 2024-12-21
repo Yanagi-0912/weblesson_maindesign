@@ -3,7 +3,8 @@ body {
     text-align: center;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    background-image: url('a.jpg');
+    background-color: white;
 }
 
 .container {
@@ -59,12 +60,12 @@ h1 {
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: #f85f22;
     color: white;
 }
 
 .controls button:hover, #resetBtn:hover {
-    background-color: #0056b3;
+    background-color: #f45027;
 }
 
 #status {
