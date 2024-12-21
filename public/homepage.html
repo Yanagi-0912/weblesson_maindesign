@@ -68,13 +68,14 @@
             display: inline-block;
         }
 
+        /* 使用者名稱，未登入時隱藏 */
         .username-label {
             position: absolute;
             right: 80px;
             top: 25px;
             color: white;
             font-weight: bold;
-            display: none; /* 預設隱藏，登入後才顯示 */
+            display: none; 
         }
     </style>
 </head>
@@ -91,16 +92,17 @@
             <a href="reviews.html">查看遊戲評價</a>
         </nav>
 
+        <!-- 使用者名稱 (登入後才顯示) -->
         <span class="username-label" id="username-label"></span>
 
         <!-- 下拉式選單容器 -->
         <div class="dropdown-container" id="dropdown-container">
-            <!-- 預設為「更多」按鈕 -->
+            <!-- 預設顯示「更多」按鈕 -->
             <button class="dropdown-btn" id="dropdown-btn">更多</button>
             <div class="dropdown-content" id="dropdown-content">
                 <a href="userpage.html">我的資料</a>
                 <a href="settings.html">設定</a>
-                <a href="logout.html">登出</a>
+                <a href="#" id="logout-link">登出</a>
             </div>
         </div>
     </header>
@@ -141,29 +143,44 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         $(document).ready(function(){
-            // 檢查使用者登入狀態
+            // 1) 網頁載入時，檢查 /user-info
             $.get('/user-info', function(data){
                 if (data.loggedIn) {
-                    // 已登入，顯示頭像與使用者名稱
-                    $('#dropdown-btn').remove(); // 移除「更多」按鈕
+                    // 已登入 -> 隱藏「更多」按鈕，改用頭像按鈕 + 顯示使用者名稱
+                    $('#dropdown-btn').remove();
 
+                    // 建立頭像按鈕
                     const avatarBtn = $('<button class="user-avatar-btn" id="avatar-btn"></button>');
+                    // 如果後端提供 avatarUrl
                     if (data.avatarUrl) {
                         avatarBtn.css('background-image', `url(${data.avatarUrl})`);
                     } else {
                         avatarBtn.css('background-color','#666');
                     }
-
+                    // 插入頭像按鈕
                     $('#dropdown-container').prepend(avatarBtn);
+
+                    // 顯示使用者名稱
                     $('#username-label').text(data.username).show();
                 } else {
-                    // 未登入：確保顯示「更多」按鈕，不顯示頭像和帳號
-                    // 預設頁面已經有「更多」按鈕，所以不用特別添加
-                    // 確保 username-label 隱藏
+                    // 未登入 -> 維持「更多」按鈕，隱藏使用者名稱
                     $('#username-label').hide();
-                    // 確保若原本顯示過頭像按鈕(理論上不會顯示，但以防萬一)
-                    $('#avatar-btn').remove();
                 }
+            });
+
+            // 2) 登出事件
+            $('#logout-link').on('click', function(e){
+                e.preventDefault();
+                // 呼叫後端 /logout
+                $.get('/logout', function(data){
+                    if (data.success) {
+                        window.location.href = 'logout.html';
+                    } else {
+                        alert('登出失敗：' + data.message);
+                    }
+                }).fail(function(){
+                    alert('無法連線至伺服器。');
+                });
             });
         });
     </script>
