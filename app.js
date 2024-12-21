@@ -5,6 +5,7 @@ const fs = require('fs');
 const multer = require('multer');
 const app = express();
 
+// 連接 MongoDB (weblessonDB)
 mongoose.connect('mongodb://localhost:27017/weblessonDB', { 
   useNewUrlParser: true, 
   useUnifiedTopology: true 
@@ -12,6 +13,7 @@ mongoose.connect('mongodb://localhost:27017/weblessonDB', {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err));
 
+// 帳號資料Schema
 const AccountData = new mongoose.Schema({
     username: { type: String, required: true },
     password: { type: String, required: true },
@@ -19,10 +21,21 @@ const AccountData = new mongoose.Schema({
 });
 const Account = mongoose.model('Account', AccountData);
 
+// ----- 新增: 評論(Review)資料Schema -----
+const reviewSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    game: { type: String, required: true },
+    rating: { type: Number, required: true },
+    comment: { type: String, default: '' },
+    time: { type: String, required: true }
+});
+const Review = mongoose.model('Review', reviewSchema, 'reviews');
+  
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 模擬當前登入使用者
 let currentUser = null;
 
 /******************************************************
@@ -214,6 +227,41 @@ app.post('/upload-html', (req, res) => {
         res.json({ success: true, message: 'HTML檔案已上傳成功', fileUrl });
     });
 });
+
+// ... 省略前面已有的程式碼
+
+/******************************************************
+ * 上傳評論 (POST /review) (已存在)
+ ******************************************************/
+app.post('/review', async (req, res) => {
+    try {
+        const { username, game, rating, comment, time } = req.body;
+        if (!username || !game || !rating || !time) {
+            return res.json({ success: false, message: '參數不足' });
+        }
+
+        // 建立並儲存
+        await Review.create({ username, game, rating, comment, time });
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error saving review:', error);
+        return res.json({ success: false, message: '伺服器錯誤' });
+    }
+});
+
+/******************************************************
+ * 取得所有評論 (GET /reviews) (新增加)
+ ******************************************************/
+app.get('/reviews', async (req, res) => {
+    try {
+      const allReviews = await Review.find();  // <- 此處 Review 是您定義的 model
+      res.json({ success: true, data: allReviews });
+    } catch (err) {
+      console.error('Error getting reviews:', err);
+      res.json({ success: false, message: '伺服器錯誤' });
+    }
+  });
+  
 
 /******************************************************
  * 啟動伺服器

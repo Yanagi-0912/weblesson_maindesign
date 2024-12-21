@@ -74,17 +74,19 @@
 
     <div class="container">
         <form id="reviewForm">
+            <!-- 沒有顯示「帳號輸入欄位」，自動取得當前登入帳號 -->
+
             <!-- 遊戲選擇 -->
-            <label for="gameSelect">選擇要評論的遊戲 (1-7):</label>
+            <label for="gameSelect">選擇要評論的遊戲:</label>
             <select id="gameSelect" required>
                 <option value="">請選擇遊戲</option>
-                <option value="1">WORDLE</option>
-                <option value="2">模擬宇宙</option>
-                <option value="3">數字拼圖</option>
-                <option value="4">我問你答</option>
-                <option value="5">快樂五子棋</option>
-                <option value="6">幾A幾B</option>
-                <option value="7">按鈕遊戲</option>
+                <option value="WORDLE">WORDLE</option>
+                <option value="模擬宇宙">模擬宇宙</option>
+                <option value="數字拼圖">數字拼圖</option>
+                <option value="我問你答">我問你答</option>
+                <option value="快樂五子棋">快樂五子棋</option>
+                <option value="幾A幾B">幾A幾B</option>
+                <option value="按鈕遊戲">按鈕遊戲</option>
             </select>
 
             <!-- 星星評分 -->
@@ -98,8 +100,8 @@
             </div>
 
             <!-- 評論內容 -->
-            <label for="comment">評論內容:</label>
-            <textarea id="comment" placeholder="輸入您的評論..." required></textarea>
+            <label for="comment">評論內容(可留空):</label>
+            <textarea id="comment" placeholder="輸入您的評論..."></textarea>
 
             <!-- 提交按鈕 -->
             <button type="submit" class="btn-submit">提交評論</button>
@@ -110,18 +112,17 @@
         <p>&copy; 糞Game獵人 <a href="privacy.html">隱私政策</a> | <a href="TermsOfUse.html">使用條款</a></p>
     </footer>
 
-    <!-- JavaScript 程式碼 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
+        // 星星評分互動
         const stars = document.querySelectorAll('.star');
         let rating = 0;
-
         stars.forEach(star => {
             star.addEventListener('click', function() {
                 rating = parseInt(this.getAttribute('data-value'));
                 updateStars();
             });
         });
-
         function updateStars() {
             stars.forEach(star => {
                 if (parseInt(star.getAttribute('data-value')) <= rating) {
@@ -132,34 +133,74 @@
             });
         }
 
+        let currentUsername = ""; // 用來存放後端回傳的當前登入帳號
+
+        // 頁面載入後，自動呼叫 /user-info 確認登入並取得 username
+        $(document).ready(function() {
+            $.get('/user-info', function(data) {
+                if (data.loggedIn) {
+                    // 從後端取回當前登入的帳號
+                    currentUsername = data.username;
+                    // 如果沒登入，可能要導向登入頁面或顯示警告 (看您的需求)
+                } else {
+                    alert("請先登入再撰寫評論");
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+
+        // 提交表單
         document.getElementById("reviewForm").addEventListener("submit", function(e) {
             e.preventDefault();
 
-            // 獲取選擇的遊戲、評論內容和評分
             const game = document.getElementById("gameSelect").value;
-            const comment = document.getElementById("comment").value.trim();
+            const comment = document.getElementById("comment").value.trim() || ""; 
 
-            if (!game || comment === "" || rating === 0) {
-                alert("請選擇遊戲、填寫評論內容並給出評分！");
+            if (!currentUsername) {
+                alert("尚未登入，無法提交評論");
+                return;
+            }
+            if (!game) {
+                alert("請選擇遊戲");
+                return;
+            }
+            if (rating === 0) {
+                alert("請給出星級評分");
                 return;
             }
 
-            // 建立評論資料
-            const review = {
+            // 建立要傳至後端的評論資料
+            const reviewData = {
+                username: currentUsername, // 不使用者手動輸入
                 game: game,
                 rating: rating,
                 comment: comment,
-                time: new Date().toLocaleString()
+                time: new Date().toISOString()
             };
 
-            // 將評論存入 Local Storage
-            let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
-            reviews.push(review);
-            localStorage.setItem("reviews", JSON.stringify(reviews));
-
-            alert("評論已成功提交！");
-            document.getElementById("reviewForm").reset();
-            updateStars();
+            // 使用 AJAX (fetch 或 jQuery) 發送 POST 到後端 /review
+            $.ajax({
+                url: '/review',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(reviewData),
+                success: function(response) {
+                    if (response.success) {
+                        alert("評論已成功提交！即將跳轉至查看評論頁面。");
+                        // 清空表單 & 星級
+                        document.getElementById("reviewForm").reset();
+                        rating = 0;
+                        updateStars();
+                        // 跳轉至 reviews.html
+                        window.location.href = "reviews.html";
+                    } else {
+                        alert("提交失敗：" + response.message);
+                    }
+                },
+                error: function() {
+                    alert("伺服器發生錯誤，請稍後再試");
+                }
+            });
         });
     </script>
 </body>

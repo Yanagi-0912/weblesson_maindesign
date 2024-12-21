@@ -58,6 +58,11 @@
             font-size: 0.9em;
             color: #888;
         }
+        .username {
+            font-size: 1em;
+            font-weight: bold;
+            color: #666;
+        }
         .empty-message {
             text-align: center;
             color: #888;
@@ -80,75 +85,95 @@
     </header>
 
     <div class="container" id="reviewsContainer">
-        <!-- 評論將透過 JavaScript 動態顯示 -->
+        <!-- 這裡會透過 JavaScript 動態加入內容 -->
     </div>
 
     <footer>
         <p>&copy; 2024 糞Game獵人</p>
     </footer>
 
-    <!-- JavaScript 程式碼 -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const reviewsContainer = document.getElementById("reviewsContainer");
+    document.addEventListener("DOMContentLoaded", function() {
+        const reviewsContainer = document.getElementById("reviewsContainer");
 
-            // 遊戲ID與名稱對應
-            const gameNames = {
-                "1": "WORDLE",
-                "2": "模擬宇宙",
-                "3": "數字拼圖",
-                "4": "我問你答",
-                "5": "快樂五子棋",
-                "6": "幾A幾B",
-                "7": "按鈕遊戲"
-            };
+        // 若後端存的 game 欄位是 "1","2","3" 等，可在這裡做對應
+        // 若後端已直接存 "WORDLE", "模擬宇宙" 等可省略
+        const gameNames = {
+            "1": "WORDLE",
+            "2": "模擬宇宙",
+            "3": "數字拼圖",
+            "4": "我問你答",
+            "5": "快樂五子棋",
+            "6": "幾A幾B",
+            "7": "按鈕遊戲"
+        };
 
-            // 從 Local Storage 中讀取評論資料
-            const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+        // 呼叫後端 API: GET /reviews
+        fetch('/reviews')
+            .then(res => res.json())
+            .then(data => {
+                // 後端建議回傳格式: { success: true, data: [ {...}, {...} ] }
+                if (!data.success) {
+                    reviewsContainer.innerHTML = `<p class='empty-message'>取得評論失敗：${data.message || '未知錯誤'}</p>`;
+                    return;
+                }
+                const reviews = data.data;  // 這是一個陣列
+                if (!reviews || reviews.length === 0) {
+                    reviewsContainer.innerHTML = "<p class='empty-message'>目前尚未有任何評論。</p>";
+                    return;
+                }
 
-            if (reviews.length === 0) {
-                reviewsContainer.innerHTML = "<p class='empty-message'>目前尚未有任何評論。</p>";
-            } else {
-                // 依照遊戲分類評論
-                const groupedReviews = {};
-
+                // 依遊戲群組化
+                const grouped = {};
                 reviews.forEach(review => {
-                    const game = gameNames[review.game] || "未知遊戲";
-                    if (!groupedReviews[game]) {
-                        groupedReviews[game] = [];
+                    // 如果後端存的 game 是 "1" 或 "WORDLE"...
+                    // 從 gameNames 對應出中文名稱（或直接使用 review.game）
+                    const gameKey = gameNames[review.game] || review.game || "未知遊戲";
+                    if (!grouped[gameKey]) {
+                        grouped[gameKey] = [];
                     }
-                    groupedReviews[game].push(review);
+                    grouped[gameKey].push(review);
                 });
 
-                // 顯示每個遊戲的評論
-                for (const gameName in groupedReviews) {
-                    const gameReviews = groupedReviews[gameName];
+                // 依序顯示
+                for (const gameName in grouped) {
+                    const gameReviews = grouped[gameName];
+
+                    // 建立區塊
                     const section = document.createElement("div");
                     section.classList.add("game-section");
 
-                    const title = document.createElement("div");
-                    title.classList.add("game-title");
-                    title.textContent = gameName;
+                    // 遊戲標題
+                    const titleDiv = document.createElement("div");
+                    titleDiv.classList.add("game-title");
+                    titleDiv.textContent = gameName;
+                    section.appendChild(titleDiv);
 
-                    section.appendChild(title);
-
-                    gameReviews.forEach(review => {
+                    // 每筆評論
+                    gameReviews.forEach(item => {
                         const reviewItem = document.createElement("div");
                         reviewItem.classList.add("review-item");
 
+                        // 星星 (rating)
+                        const stars = "★".repeat(item.rating);
+                        
                         reviewItem.innerHTML = `
-                            <div class="rating">${"★".repeat(review.rating)}</div>
-                            <div class="comment">${review.comment}</div>
-                            <div class="timestamp">${review.time}</div>
+                            <div class="username">帳號：${item.username}</div>
+                            <div class="rating">${stars}</div>
+                            <div class="comment">${item.comment || ''}</div>
+                            <div class="timestamp">${item.time}</div>
                         `;
-
                         section.appendChild(reviewItem);
                     });
 
                     reviewsContainer.appendChild(section);
                 }
-            }
-        });
+            })
+            .catch(err => {
+                console.error(err);
+                reviewsContainer.innerHTML = "<p class='empty-message'>伺服器發生錯誤。</p>";
+            });
+    });
     </script>
 </body>
 </html>
