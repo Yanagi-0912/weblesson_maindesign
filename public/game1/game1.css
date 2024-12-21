@@ -141,7 +141,7 @@ h2 {
 
 #start-game-button {
     padding: 15px 30px;
-    background-color: #007bff;
+    background-color: #17181a;
     color: white;
     border: none;
     border-radius: 8px;
@@ -152,5 +152,5 @@ h2 {
 }
 
 #start-game-button:hover {
-    background-color: #0056b3;
+    background-color: #121213;
 }

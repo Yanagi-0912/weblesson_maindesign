@@ -10,7 +10,7 @@ body {
 }
 
 header {
-    background-color: #007bff; /* 藍色背景 */
+    background-color: #151516; /* 藍色背景 */
     color: white;
     padding: 20px 0;
     text-align: center;
@@ -25,7 +25,7 @@ nav {
     display: flex;
     justify-content: center;
     padding: 10px 0;
-    background-color: #0056b3; /* 深藍色 */
+    background-color: #0d0e0f; /* 深藍色 */
 }
 
 nav a {
@@ -38,7 +38,7 @@ nav a {
 }
 
 nav a:hover {
-    background-color: #003f7f; /* 更深藍 */
+    background-color: #020b13; /* 更深藍 */
 }
 
 main {
@@ -56,9 +56,9 @@ section {
 }
 
 section h2 {
-    color: #007bff;
+    color: #1c1d1e;
     font-size: 1.8em;
-    border-bottom: 2px solid #007bff;
+    border-bottom: 2px solid #16181b;
     padding-bottom: 5px;
     margin-bottom: 15px;
 }
