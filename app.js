@@ -21,7 +21,7 @@ const AccountData = new mongoose.Schema({
 });
 const Account = mongoose.model('Account', AccountData);
 
-// ----- 新增: 評論(Review)資料Schema -----
+//評論(Review)資料Schema
 const reviewSchema = new mongoose.Schema({
     username: { type: String, required: true },
     game: { type: String, required: true },
@@ -30,7 +30,14 @@ const reviewSchema = new mongoose.Schema({
     time: { type: String, required: true }
 });
 const Review = mongoose.model('Review', reviewSchema, 'reviews');
-  
+
+//遊戲三關卡進度Schema
+const game3ProgressSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    progress: { type: Number, default: 1 }
+});
+const Game3Progress = mongoose.model('Game3Progress', game3ProgressSchema, 'game3progress');
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -228,8 +235,6 @@ app.post('/upload-html', (req, res) => {
     });
 });
 
-// ... 省略前面已有的程式碼
-
 /******************************************************
  * 上傳評論 (POST /review) (已存在)
  ******************************************************/
@@ -262,7 +267,59 @@ app.get('/reviews', async (req, res) => {
     }
   });
   
+  /******************************************************
+ * 取得遊玩進度
+ ******************************************************/
+  app.get('/game3-progress', async (req, res) => {
+    if (!currentUser) {
+        return res.json({ success: false, message: '尚未登入' });
+    }
+    try {
+        let record = await Game3Progress.findOne({ username: currentUser.username });
+        if (!record) {
+            // 若尚無紀錄，回傳預設 1
+            return res.json({ success: true, progress: 1 });
+        }
+        // 否則回傳資料庫中的 progress
+        res.json({ success: true, progress: record.progress });
+    } catch (err) {
+        console.error('取得Game3進度錯誤:', err);
+        res.json({ success: false, message: '伺服器錯誤' });
+    }
+});
+/******************************************************
+ * 更新遊玩進度
+ ******************************************************/
+app.post('/game3-progress', async (req, res) => {
+    if (!currentUser) {
+        return res.json({ success: false, message: '尚未登入' });
+    }
+    try {
+        const { progress } = req.body;
+        if (!progress) {
+            return res.json({ success: false, message: '缺少 progress 參數' });
+        }
 
+        let record = await Game3Progress.findOne({ username: currentUser.username });
+        if (!record) {
+            // 若尚無紀錄，建立一筆
+            record = new Game3Progress({
+                username: currentUser.username,
+                progress: progress
+            });
+        } else {
+            // 若有，若傳入的新 progress 比現有更高才更新
+            if (progress > record.progress) {
+                record.progress = progress;
+            }
+        }
+        await record.save();
+        res.json({ success: true, updatedProgress: record.progress });
+    } catch (err) {
+        console.error('更新Game3進度錯誤:', err);
+        res.json({ success: false, message: '伺服器錯誤' });
+    }
+});
 /******************************************************
  * 啟動伺服器
  ******************************************************/

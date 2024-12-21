@@ -83,12 +83,27 @@ function Complete() {
     if (swstatus.every(status => status === 1)) {
         alert("恭喜過關！");
         saveProgress(5);
+        completeLevel(5); 
     }
 }
 
 function saveProgress(level) {
-    // 保存玩家進度
-    localStorage.setItem("game3Progress", level);
+    fetch('/game3-progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ progress: level })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            console.log("進度儲存成功，伺服器回傳 updatedProgress=", data.updatedProgress);
+        } else {
+            console.error("儲存進度失敗：", data.message);
+        }
+    })
+    .catch(err => {
+        console.error("伺服器發生錯誤：", err);
+    });
 }
 
 document.getElementById("sw0").onclick = function () { clicksw(0); };
