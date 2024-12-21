@@ -16,6 +16,7 @@ header {
     color: white;
     padding: 20px;
     text-align: center;
+    position: relative;
 }
 
 header h1 {
@@ -25,6 +26,7 @@ header h1 {
 
 nav {
     margin-top: 10px;
+    display: inline-block;
 }
 
 nav a {
@@ -36,6 +38,68 @@ nav a {
 
 nav a:hover {
     text-decoration: underline;
+}
+.dropdown-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.dropdown-btn, .user-avatar-btn {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border: none;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+.user-avatar-btn {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.dropdown-btn:hover, .user-avatar-btn:hover {
+    background-color: #444;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 999;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+.dropdown-content a:hover {
+    background-color: #f4f4f4;
+}
+
+.dropdown-container:hover .dropdown-content {
+    display: block;
+}
+
+.username-label {
+    position: absolute;
+    right: 80px;
+    top: 25px;
+    color: white;
+    font-weight: bold;
+    display: none; 
 }
 
 /* Hero Section */
