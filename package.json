@@ -7,8 +7,7 @@
   "license": "ISC",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js",
-    "build": "echo 'No build step specified'"
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "express": "4.21.2",
